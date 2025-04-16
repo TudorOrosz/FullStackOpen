@@ -1,33 +1,28 @@
-const Hello = (props) => {
+const Header = (props) => {
   console.log(props)
   return (
     <div>
-      <p>
-        Hello {props.name}, you are {props.age} years old
-      </p>
-    </div>
-  )
-}
-
-const Footer = () => {
-  return (
-    <div>
-      greeting app created by <a href='https://github.com/mluukkai'>mluukkai</a>
+      <p> Course name: {props.course}</p>
+      <p> Course content: {props.course}</p>
     </div>
   )
 }
 
 const App = () => {
-  const friends = [
-    { name: 'Peter', age: 4 },
-    { name: 'Maya', age: 10 },
-  ]
+  const course = 'Half Stack application development'
+  const part1 = 'Fundamentals of React'
+  const exercises1 = 10
+  const part2 = 'Using props to pass data'
+  const exercises2 = 7
+  const part3 = 'State of a component'
+  const exercises3 = 14
 
   return (
-    <div>
-      <p>{friends[0].name} {friends[0].age}</p>
-      <p>{friends[1].name} {friends[1].age}</p>
-    </div>
+    <>
+      <Header course={course} />
+      <Content part1={part1} part2={part2} part3={part3} />
+      <Total total={exercises1+exercises2+exercises3} />
+    </>
   )
 }
 
