@@ -11,10 +11,14 @@ const create = newObject => {
   return request.then(response => response.data)
 }
 
-const delete_person = (id) => {
+const delete_person = id => {
   const request = axios.delete(`${baseUrl}/${id}`)
-  return request.then(response => response.data) //do i need this line?
+  return request.then(response => response.data)
 }
 
+const update_number = (id, updatedPerson) => {
+  const request = axios.put(`${baseUrl}/${id}`, updatedPerson)
+  return request.then(response => response.data)
+}
 
-export default { getAll, create, delete_person }
+export default { getAll, create, delete_person, update_number }

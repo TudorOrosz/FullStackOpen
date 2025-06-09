@@ -18,11 +18,21 @@ const App = (props) => {
     })
   }, [])
 
-  // Function to add a name to the phonebook + alert if name already exists
+  // Function to add a name to the phonebook + alert and confirm replacing old number with new number
   const addName = (event) => {
     event.preventDefault()
-    if (persons.some(person => person.name === newName)){
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find(person => person.name === newName)
+    if (existingPerson){
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) === true){
+        const person = persons.find((n)=> n.name === newName)
+        personService
+          .update_number(person.id, { ...person, number: newNumber })
+          .then((updatedPerson) => {
+            setPersons(persons.map(person =>
+            person.name === newName ? updatedPerson : person))
+          })
+          .catch((error) => {alert(`there was an error upating the person's phone number`)})
+      }
       return
     }
     const personObject = {
@@ -64,9 +74,7 @@ const App = (props) => {
       .then(() => {
         setPersons(persons.filter(person => person.id !== id))
       })
-      .catch((error) => {
-        alert(`there was an error deleting the person`)
-      })
+      .catch((error) => {alert(`there was an error deleting the person`)})
     }
   }
 
