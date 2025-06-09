@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
+// Component imports
 import Person from './components/Person'
 import Filter from './components/Filter'
 import Form from './components/Form'
@@ -12,13 +13,9 @@ const App = (props) => {
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    personService.getAll().then((initialPersons) =>{
+      setPersons(initialPersons)
+    })
   }, [])
 
   // Function to add a name to the phonebook + alert if name already exists
@@ -32,9 +29,11 @@ const App = (props) => {
       name: newName,
       number: newNumber 
     }
-    setPersons(persons.concat(personObject))
-    setNewName('') 
-    setNewNumber('')   
+    personService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson))
+      setNewName('') 
+      setNewNumber('')  
+    })
   }
 
   // Function to filter phonebook by name
@@ -46,16 +45,30 @@ const App = (props) => {
 
   // Event handlers
   const handleNameChange = (event) => {
-  setNewName(event.target.value)
+    setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-  setNewNumber(event.target.value)
+    setNewNumber(event.target.value)
   }
 
   const handleFilterChange = (event) => {
-  setNewFilter(event.target.value)
-  }  
+    setNewFilter(event.target.value)
+  }
+  
+  const handleDeleteOf = (id, name) => {
+    console.log(persons)
+    if (confirm(`Delete ${name}?`) === true){
+    personService
+      .delete_person(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+      .catch((error) => {
+        alert(`there was an error deleting the person`)
+      })
+    }
+  }
 
   // HTML of app
   return (
@@ -67,7 +80,7 @@ const App = (props) => {
       <h2>Numbers</h2>
       <ul>
         {personsToShow.map((person) => (
-          <Person key={person.name} person={person}/>
+          <Person key={person.name} person={person} handleDelete={() => handleDeleteOf(person.id, person.name)}/>
         ))}
       </ul>
     </div>
