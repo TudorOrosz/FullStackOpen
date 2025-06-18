@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
-// Component imports
-import Person from './components/Person'
 import Filter from './components/Filter'
 import Form from './components/Form'
+import Notification from './components/Notification'
+import Person from './components/Person'
 
 const App = (props) => {
   // Declaring states to use
@@ -11,6 +11,7 @@ const App = (props) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState({text: '', type: ''})
 
   useEffect(() => {
     personService.getAll().then((initialPersons) =>{
@@ -18,35 +19,47 @@ const App = (props) => {
     })
   }, [])
 
-  // Function to add a name to the phonebook + alert and confirm replacing old number with new number
+  // Function: add a name to the phonebook + alert and confirm replacing old number with new number + Confirmation message (Succesful/Info deleted already)
   const addName = (event) => {
     event.preventDefault()
     const existingPerson = persons.find(person => person.name === newName)
+    // Checking if person exists => ask user if a number change is wanted
     if (existingPerson){
       if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) === true){
         const person = persons.find((n)=> n.name === newName)
         personService
           .update_number(person.id, { ...person, number: newNumber })
           .then((updatedPerson) => {
+            setMessage({text: `${newName}'s number was changed to: ${newNumber}`, type: 'success'})
+            setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
             setPersons(persons.map(person =>
             person.name === newName ? updatedPerson : person))
           })
-          .catch((error) => {alert(`there was an error upating the person's phone number`)})
+        .catch((error) => {
+          setMessage({text: `Information of ${newName} has already been removed from the server`, type: "error"})
+          setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
+        })
+
       }
       return
     }
+    // Adding a new person
     const personObject = {
       name: newName,
       number: newNumber 
     }
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName('') 
-      setNewNumber('')  
-    })
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setMessage({text: `Added ${newName}`, type: 'success'})
+        setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
+        setPersons(persons.concat(returnedPerson))
+        setNewName('') 
+        setNewNumber('')  
+      })
   }
 
-  // Function to filter phonebook by name
+  // Function: filter phonebook by name
   const personsToShow = newFilter
     ? persons.filter(person =>
         person.name.toLowerCase().includes(newFilter.toLowerCase())
@@ -66,15 +79,21 @@ const App = (props) => {
     setNewFilter(event.target.value)
   }
   
+  // Function: Delete a person + Confirmation message (Succesful/Info deleted already)
   const handleDeleteOf = (id, name) => {
     console.log(persons)
     if (confirm(`Delete ${name}?`) === true){
     personService
       .delete_person(id)
       .then(() => {
+        setMessage({text: `Deleted ${name}`, type: 'success'})
+        setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
         setPersons(persons.filter(person => person.id !== id))
       })
-      .catch((error) => {alert(`there was an error deleting the person`)})
+      .catch((error) => {
+        setMessage({text: `Information of ${name} has already been removed from the server`, type: "error"})
+        setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
+      })
     }
   }
 
@@ -82,6 +101,7 @@ const App = (props) => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {message.text && <Notification message={message.text} type={message.type} />}
       <Filter filter={newFilter} handleFilterChange={handleFilterChange}/>
       <h2>add a new</h2>
       <Form addName={addName} newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
