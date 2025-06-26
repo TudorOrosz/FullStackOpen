@@ -1,0 +1,8 @@
+.search_div {
+  display: flex;
+  align-items: center;
+}
+
+.find_paragraph {
+  margin-right: 8px;
+}
