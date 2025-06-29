@@ -9,7 +9,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "for now nothing"
+    "test": "for now nothing",
+    "build:ui": "rm -rf dist && cd ../frontend_part2 && npm run build && cp -r dist ../part3_theory/",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "dependencies": {
     "cors": "^2.8.5",
