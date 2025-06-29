@@ -1,0 +1,12 @@
+# How to create a project like this one:
+1. Create a folder and an index.js file, and run 'npm init'.
+2. Fill the details for npm init
+3. Run 'npm install express' to install express
+4. In package.json add the following to the scripts object:
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    The first will help in starting the server with 'npm start'
+    Teh second will help in starting the dev server and keep restarting it when changes are made to index.js (like with nodemon) with 'npm run dev'
+
+
+NB: If unsure, look at the package.json file and see what details, dependencies etc. you hvae there

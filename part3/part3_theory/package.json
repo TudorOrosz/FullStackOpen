@@ -1,0 +1,22 @@
+{
+  "name": "part3_theory",
+  "version": "1.0.0",
+  "description": "Testing a backend with npm init",
+  "license": "ISC",
+  "author": "Tudor Orosz",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "for now nothing"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@ljharb/tsconfig": "^0.3.2"
+  }
+}
