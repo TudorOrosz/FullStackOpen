@@ -1,42 +1,46 @@
-const mongoose = require('mongoose')
+// Will comment out code since we do not need this anymore. Connection
+// to Mongo is done by models -> person
 
-const password = process.argv[2]
 
-const url = `mongodb+srv://tudororosz:${password}@cluster0.mtmf7mx.mongodb.net/personApp?retryWrites=true&w=majority&appName=Cluster0`
+// const mongoose = require('mongoose')
 
-mongoose.set('strictQuery',false)
+// const password = process.argv[2]
 
-mongoose.connect(url)
+// const url = `mongodb+srv://tudororosz:${password}@cluster0.mtmf7mx.mongodb.net/personApp?retryWrites=true&w=majority&appName=Cluster0`
 
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
+// mongoose.set('strictQuery',false)
 
-const Person = mongoose.model('Person', personSchema)
+// mongoose.connect(url)
 
-if (process.argv.length < 3) {
-    const person = new Person({
-    name: process.argv[3],
-    number: process.argv[4],
-    })
+// const personSchema = new mongoose.Schema({
+//   name: String,
+//   number: String,
+// })
 
-    person.save().then(result => {
-    console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
-    mongoose.connection.close()
-    })
-}
+// const Person = mongoose.model('Person', personSchema)
 
-if (process.argv.length === 3) {
-    console.log('only password was given as argument')
-    Person
-        .find({})
-        .then(persons => {
-            persons.forEach(person => {
-            console.log(person)
-        })
-        mongoose.connection.close()
-        process.exit(1)
-    })  
-}
+// if (process.argv.length < 3) {
+//     const person = new Person({
+//     name: process.argv[3],
+//     number: process.argv[4],
+//     })
+
+//     person.save().then(result => {
+//     console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
+//     mongoose.connection.close()
+//     })
+// }
+
+// if (process.argv.length === 3) {
+//     console.log('only password was given as argument')
+//     Person
+//         .find({})
+//         .then(persons => {
+//             persons.forEach(person => {
+//             console.log(person)
+//         })
+//         mongoose.connection.close()
+//         process.exit(1)
+//     })  
+// }
 
