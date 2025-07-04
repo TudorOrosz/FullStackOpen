@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/persons/68667c8390522f77b0845f74
+Content-Type: application/json
+
+{
+    "name": "Tudor2_updated", 
+    "number": "123456-789"
+}
