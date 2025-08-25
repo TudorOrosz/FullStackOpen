@@ -5,7 +5,7 @@ import Form from './components/Form'
 import Notification from './components/Notification'
 import Person from './components/Person'
 
-const App = (props) => {
+const App = () => {
   // Declaring states to use
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
@@ -35,7 +35,7 @@ const App = (props) => {
             setPersons(persons.map(person =>
             person.name === newName ? updatedPerson : person))
           })
-        .catch((error) => {
+        .catch(() => {
           setMessage({text: `Information of ${newName} has already been removed from the server`, type: "error"})
           setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
         })
@@ -57,6 +57,12 @@ const App = (props) => {
         setNewName('') 
         setNewNumber('')  
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setMessage({text: `${error.response.data.error}`, type: 'error'})
+        setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
+      })
+        
   }
 
   // Function: filter phonebook by name
@@ -90,7 +96,7 @@ const App = (props) => {
         setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
         setPersons(persons.filter(person => person.id !== id))
       })
-      .catch((error) => {
+      .catch(() => {
         setMessage({text: `Information of ${name} has already been removed from the server`, type: "error"})
         setTimeout(() => {setMessage({ text: '', type: '' })}, 5000)
       })

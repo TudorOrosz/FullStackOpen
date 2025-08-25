@@ -5,8 +5,6 @@ const Person = require('./models/person')
 
 const app = express()
 
-let persons = []
-
 // First Middleware specifications
 morgan.token('content', function (req) {
   return JSON.stringify(req.body)
@@ -64,16 +62,16 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'name or number is missing' 
+    return response.status(400).json({
+      error: 'name or number is missing'
     })
   }
 
   Person.findOne({ name: body.name })
     .then(existingPerson => {
       if (existingPerson) {
-        return response.status(400).json({ 
-          error: 'name must be unique' 
+        return response.status(400).json({
+          error: 'name must be unique'
         })
       }
 
