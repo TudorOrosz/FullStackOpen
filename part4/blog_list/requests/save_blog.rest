@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "How to get good at life",
+    "author": "Tudor Orosz",
+    "url": "www.testurl.com",
+    "likes": 6
+}
