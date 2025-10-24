@@ -14,7 +14,7 @@ const listWithOneBlog = [
       __v: 0
     }
   ]
-  const listWithManyBlogs = [
+const listWithManyBlogs = [
     {
       _id: "5a422a851b54a676234d17f7",
       title: "React patterns",
