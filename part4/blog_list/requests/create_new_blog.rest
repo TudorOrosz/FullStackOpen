@@ -6,5 +6,5 @@ Content-Type: application/json
     "author": "Tudor Orosz",
     "url": "www.testurl.com 3",
     "likes": 10,
-    "userId": "6901c5ba7c4d0cbb25e81345"
+    "userId": "6901ca5e47728c919c234aeb"
 }
