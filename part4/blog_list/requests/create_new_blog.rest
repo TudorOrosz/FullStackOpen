@@ -2,9 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Test post 2",
+    "title": "test 3",
     "author": "Tudor Orosz",
-    "url": "www.testurl.com 2",
-    "likes": 6,
-    "userId": "68fe4e0261eb357470e0fb0e"
+    "url": "www.testurl.com 3",
+    "likes": 10,
+    "userId": "6901c5ba7c4d0cbb25e81345"
 }

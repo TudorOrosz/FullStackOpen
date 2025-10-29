@@ -84,7 +84,10 @@ describe('when there are intially some blogs saved', () => {
             const missingTitle = { author: 'test Author 4', url: 'www.test.com 4', likes: 7 }
 
             for (const blog of [missingUrl, missingTitle]) {
-                await api.post('/api/blogs').send(blog).expect(400)
+                await api
+                .post('/api/blogs')
+                .send(blog)
+                .expect(400)
             }
         })
     })
