@@ -1,7 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 // Helper function for obtaining token
 // const getTokenFrom = request => {
@@ -20,18 +20,11 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 // Create new blog
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const body = request.body
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
-  }
+  // get user from request object -> created by middleware
+  const user = request.user
 
   const blog = new Blog({
     title: body.title,
@@ -49,9 +42,25 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 // Delete blog
-blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+  
+  // get user from request object -> created by middleware
+  const user = request.user
+
+  // find blog that we want to delete by id
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+
+  // verify ownership fo the bog: that the user associated with blog id provided in the request URL 
+  // is the same as the user whose token was provided in the authorization
+  if (blog.user.toString() === user._id.toString()) {
+    await Blog.findByIdAndDelete(request.params.id)
+    return response.status(204).end()
+  } else {
+    return response.status(403).json({ error: 'token does not match blog post owner ID' })
+  }
 })
 
 // Update blog
