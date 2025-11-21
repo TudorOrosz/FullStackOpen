@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const config = require('../utils/config')
 
 const api = supertest(app)
 
@@ -49,6 +50,7 @@ describe('when there are intially some blogs saved', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `${config.TEST_BEARER_TOKEN}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -69,6 +71,7 @@ describe('when there are intially some blogs saved', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `${config.TEST_BEARER_TOKEN}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -86,9 +89,27 @@ describe('when there are intially some blogs saved', () => {
             for (const blog of [missingUrl, missingTitle]) {
                 await api
                 .post('/api/blogs')
+                .set('Authorization', `${config.TEST_BEARER_TOKEN}`)
                 .send(blog)
                 .expect(400)
             }
+        })
+
+        test('fails with status code 401 Unauthorized if a token is not provided', async () => {
+            const newBlog = {
+                title: "test Title",
+                author: "test Author",
+                url: "www.test.com",
+                likes: 10,
+            }
+
+            const response = await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(401)
+                .expect('Content-Type', /application\/json/)
+
+            assert.strictEqual(response.body.error, 'Unauthorized')
         })
     })
 
