@@ -13,11 +13,8 @@ const App = () => {
   const [message, setMessage] = useState({text: '', type: ''})
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [user, setUser] = useState(null)
-  const noteFormRef = useRef()
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -34,24 +31,15 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = async event => {
-    event.preventDefault()
-    noteFormRef.current.toggleVisibility()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
-    }
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
 
     const createdBlog = await blogService.create(blogObject)
     createdBlog.user = { username: user.username }; // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
     setBlogs(prevBlogs => prevBlogs.concat(createdBlog));
-    setMessage({text: `a new blog '${title}' by ${author} added`, type: 'success'})
+    setMessage({text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success'})
     setTimeout(() => { setMessage({text: '', type: ''}) }, 5000);
-    setTitle('');
-    setAuthor('');
-    setUrl('');
   }
 
   const handleLogin = async event => {
@@ -81,7 +69,7 @@ const App = () => {
   }
   // Component props
   const loginFormProps = { username, password, setUsername, setPassword, handleLogin };
-  const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
+  //const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
   
   // Early return to display login page
   if (user === null) {
@@ -110,8 +98,8 @@ const App = () => {
         </div>
       )}
 
-      <Togglable buttonLabel="create new blog" ref={noteFormRef}>
-        <BlogForm {...blogFormProps} />
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
       </Togglable>
 
       <ul>
