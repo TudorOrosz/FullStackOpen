@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import blogService from './services/blogs'
+import loginService from './services/login'
+
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +17,7 @@ const App = () => {
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
   const [user, setUser] = useState(null)
+  const noteFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -29,10 +32,11 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-  }, [])  
+  }, [])
 
   const addBlog = async event => {
     event.preventDefault()
+    noteFormRef.current.toggleVisibility()
     const blogObject = {
       title: title,
       author: author,
@@ -76,9 +80,10 @@ const App = () => {
     blogService.setToken(null)
   }
   // Component props
-  const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
   const loginFormProps = { username, password, setUsername, setPassword, handleLogin };
+  const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
   
+  // Early return to display login page
   if (user === null) {
     return (
       <div>
@@ -91,6 +96,7 @@ const App = () => {
     )
   } 
 
+  // Display rest of the app when user is logged in
   return (
     <div>      
       <h1>The insightful Blogs</h1>
@@ -104,7 +110,9 @@ const App = () => {
         </div>
       )}
 
-      <BlogForm {...blogFormProps} />
+      <Togglable buttonLabel="create new blog" ref={noteFormRef}>
+        <BlogForm {...blogFormProps} />
+      </Togglable>
 
       <ul>
         {blogs

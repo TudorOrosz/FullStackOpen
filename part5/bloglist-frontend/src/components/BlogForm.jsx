@@ -1,4 +1,22 @@
-const BlogForm = ({ addBlog, title, author, url, setTitle, setAuthor, setUrl  }) => (
+import { useState } from 'react'
+
+const BlogForm = ({ addBlog, title, author, url, setTitle, setAuthor, setUrl  }) => {
+  const [newBlog, setNewBlog] = useState('')
+
+  // const addBlog = async event => {
+  //   event.preventDefault()
+  //   createNote({
+  //     content: newNote,
+  //     important: true
+  //   })
+
+  //   setNewNote('')
+  // }
+
+
+
+  
+  return (
     <div>
       <h2>Create new blog</h2>
       <form onSubmit={addBlog}>
@@ -37,6 +55,7 @@ const BlogForm = ({ addBlog, title, author, url, setTitle, setAuthor, setUrl  })
         <button type="submit">create</button>
       </form>
     </div>
-)
+  )
+}
 
 export default BlogForm
