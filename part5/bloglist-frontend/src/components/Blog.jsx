@@ -1,11 +1,8 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const Blog = ({ blog, updateBlog }) => {
+  const [showDetails, setShowDetails] = useState(false)
 
-  const toggleDetails = () => {
-    setShowDetails(!showDetails)
-  }
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -13,6 +10,21 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+
+  const toggleDetails = () => {
+    setShowDetails(!showDetails)
+  }
+
+  const incrementLikes = async () => { 
+    updateBlog ({
+      id: blog.id,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url
+    })
+  }  
 
  return(
     <div style={blogStyle}>
@@ -24,7 +36,7 @@ const Blog = ({ blog }) => {
           </div>
           <div>
             {blog.likes}
-            <button type="button">like</button>
+            <button type="button" onClick={incrementLikes}>like</button>
           </div>
           <div>
             {blog.user.name}

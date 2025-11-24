@@ -31,6 +31,7 @@ const App = () => {
     }
   }, [])
 
+  // Function for creating a blog -> note that reference of it is used in the BlogForm component
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
 
@@ -40,6 +41,23 @@ const App = () => {
     setBlogs(prevBlogs => prevBlogs.concat(createdBlog));
     setMessage({text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success'})
     setTimeout(() => { setMessage({text: '', type: ''}) }, 5000);
+  }
+
+  // Function for updating a bog -> note that reference of it is used in the Blog component
+  const updateBlog = async (blogObject) => {
+    const blogId = blogObject.id
+    const { id, ...blogWithoutId } = blogObject;
+
+    const updatedBlog = await blogService.update(blogId, blogWithoutId)
+
+    // preserve original user as backend does not return username
+    const original = blogs.find(b => b.id === id)
+    const normalized = { ...updatedBlog, user: original.user }
+    console.log(original.user)
+    
+    setBlogs(prevBlogs =>
+      prevBlogs.map(b => (b.id !== id ? b : normalized))
+    )
   }
 
   const handleLogin = async event => {
@@ -106,7 +124,7 @@ const App = () => {
         {blogs
           .filter((blog) => blog.user && blog.user.username === user.username)
           .map(blog => (
-          <Blog key={blog.id} blog={blog}/>
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
         ))}
       </ul>
     </div>
