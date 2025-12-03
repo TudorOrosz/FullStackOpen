@@ -15,7 +15,7 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
     setShowDetails(!showDetails)
   }
 
-  const incrementLikes = async () => { 
+  const incrementLikes = async () => {
     updateBlog ({
       id: blog.id,
       user: blog.user.id,
@@ -24,19 +24,16 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
       author: blog.author,
       url: blog.url
     })
-  }  
+  }
 
   const toggleDelete = async () => {
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)){
       deleteBlog(blog.id)}
   }
 
-  const canDelete = blog.user.id === user.id;
+  const canDelete = blog.user.id === user.id
 
-  console.log(blog.user.id); 
-  console.log(user)
-
- return(
+  return(
     <div style={blogStyle}>
       {blog.title} {blog.author}
       <button type="button" onClick={toggleDetails}>{showDetails ? 'hide' : 'view'}</button>
@@ -52,10 +49,10 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
           <div>
             {blog.user.name}
           </div>
-            {canDelete && <button type="button" onClick={toggleDelete}>delete</button>}
+          {canDelete && <button type="button" onClick={toggleDelete}>delete</button>}
         </div>
-      )} 
-    </div>  
+      )}
+    </div>
   )
 }
 

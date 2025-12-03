@@ -10,8 +10,8 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState({text: '', type: ''})
-  const [username, setUsername] = useState('') 
+  const [message, setMessage] = useState({ text: '', type: '' })
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -36,17 +36,17 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
 
     const createdBlog = await blogService.create(blogObject)
-    createdBlog.user = { username: user.username }; // so that user is also included in the createdBlog, so when we concatenate
+    createdBlog.user = { username: user.username } // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
-    setBlogs(prevBlogs => prevBlogs.concat(createdBlog));
-    setMessage({text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success'})
-    setTimeout(() => { setMessage({text: '', type: ''}) }, 5000);
+    setBlogs(prevBlogs => prevBlogs.concat(createdBlog))
+    setMessage({ text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success' })
+    setTimeout(() => { setMessage({ text: '', type: '' }) }, 5000)
   }
 
   // Function for updating a bog -> note that reference of it is used in the Blog component
   const updateBlog = async (blogObject) => {
     const blogId = blogObject.id
-    const { id, ...blogWithoutId } = blogObject;
+    const { id, ...blogWithoutId } = blogObject
 
     const updatedBlog = await blogService.update(blogId, blogWithoutId)
 
@@ -54,7 +54,7 @@ const App = () => {
     const original = blogs.find(b => b.id === id)
     const normalized = { ...updatedBlog, user: original.user }
     console.log(original.user)
-    
+
     setBlogs(prevBlogs =>
       prevBlogs.map(b => (b.id !== id ? b : normalized))
     )
@@ -76,13 +76,13 @@ const App = () => {
       blogService.setToken(user.token)
 
       setUser(user)
-      setUsername('') 
+      setUsername('')
       setPassword('')
     } catch (error) {
-      console.error('Login failed:', error);
-      setMessage({text: `wrong credentials`, type: 'error'})
-      setTimeout(() => { setMessage({text: '', type: ''}) }, 5000);
-    }    
+      console.error('Login failed:', error)
+      setMessage({ text: 'wrong credentials', type: 'error' })
+      setTimeout(() => { setMessage({ text: '', type: '' }) }, 5000)
+    }
   }
 
   const handleLogout = () => {
@@ -91,9 +91,9 @@ const App = () => {
     blogService.setToken(null)
   }
   // Component props
-  const loginFormProps = { username, password, setUsername, setPassword, handleLogin };
+  const loginFormProps = { username, password, setUsername, setPassword, handleLogin }
   //const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
-  
+
   // Early return to display login page
   if (user === null) {
     return (
@@ -105,15 +105,15 @@ const App = () => {
         <LoginForm {...loginFormProps} />
       </div>
     )
-  } 
+  }
 
   // Display rest of the app when user is logged in
   return (
-    <div>      
+    <div>
       <h1>The insightful Blogs</h1>
-      
+
       {message.text && <Notification message={message.text} type={message.type} />}
-      
+
       {user && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <p style={{ margin: 0 }}>{user.name} is logged in</p>
@@ -129,8 +129,8 @@ const App = () => {
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map(blog => (
-          <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
-        ))}
+            <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
+          ))}
       </ul>
     </div>
   )
