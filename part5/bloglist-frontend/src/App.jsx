@@ -60,13 +60,18 @@ const App = () => {
     )
   }
 
+  const deleteBlog = async (blogId) => {
+    await blogService.deleteById(blogId)
+    setBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== blogId))
+  }
+
   const handleLogin = async event => {
     event.preventDefault()
     console.log('logging in with', username, password)
 
     try {
       const user = await loginService.login({ username, password })
-
+      console.log(user)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
 
@@ -122,9 +127,9 @@ const App = () => {
 
       <ul>
         {blogs
-          .filter((blog) => blog.user && blog.user.username === user.username)
+          .sort((a, b) => b.likes - a.likes)
           .map(blog => (
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+          <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
         ))}
       </ul>
     </div>

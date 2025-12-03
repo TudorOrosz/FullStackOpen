@@ -53,7 +53,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     return response.status(404).json({ error: 'blog not found' })
   }
 
-  // verify ownership fo the bog: that the user associated with blog id provided in the request URL 
+  // verify ownership of the blog: that the user associated with blog id provided in the request URL 
   // is the same as the user whose token was provided in the authorization
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndDelete(request.params.id)
