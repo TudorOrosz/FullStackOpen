@@ -36,7 +36,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
 
     const createdBlog = await blogService.create(blogObject)
-    createdBlog.user = { username: user.username, name: user.name } // so that user is also included in the createdBlog, so when we concatenate
+    createdBlog.user = { username: user.username, name: user.name, id: user.id } // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
     setBlogs(prevBlogs => prevBlogs.concat(createdBlog))
     setMessage({ text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success' })
