@@ -28,4 +28,13 @@ const createNew = async (content) => {
   return await response.json()
 }
 
-export default { getAll, createNew }
+const vote = async (anecdote) => {
+  const response = await fetch(`${baseUrl}/${anecdote.id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(anecdote),
+  })
+  return response.json()
+}
+
+export default { getAll, createNew, vote }
