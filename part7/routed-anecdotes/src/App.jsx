@@ -4,7 +4,6 @@ import {
   Route,
   Link,
   useMatch,
-  useParams,
   useNavigate
 } from 'react-router-dom'
 
@@ -95,9 +94,7 @@ const CreateNew = (props) => {
 
 }
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id
-  const anecdote = anecdotes.find(n => n.id === Number(id))
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>{anecdote.content}</h2>
@@ -164,11 +161,11 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
-  //const match = useMatch('/anecdotes/:id')
+  const match = useMatch('/anecdotes/:id')
 
-  // const anecdote = match
-  //   ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
-  //   : null  
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null 
 
   return (
     <div>
@@ -180,7 +177,7 @@ const App = () => {
         <Route path="/create_new" element={<CreateNew addNew={addNew} />} />
         <Route path="/about" element={<About/>} />
         <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes}/>} />
-        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
       </Routes>
       <Footer />
     </div>
