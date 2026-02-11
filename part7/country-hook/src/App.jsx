@@ -17,21 +17,41 @@ const useField = (type) => {
 
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
+  const [countriesCache, setCountriesCache] = useState(null)
 
   useEffect(() => {
-    if (name) {
-      console.log(name)
-      Services.getAll().then((countriesAll) => {
-        const match = countriesAll.find(country => country.name.common.toLowerCase().startsWith(name.toLowerCase()))
-        if(match){
-          const newCountry = {data: match, found: true};
-          setCountry(newCountry)
-        }
-        else {
-          setCountry("something")
-        }        
-      })
+    let cancelled = false
+
+    if (!name) {
+      setCountry(null)
+      return undefined
     }
+
+    const findCountry = async () => {
+      try {
+        let countries = countriesCache
+        if (!countries) {
+          countries = await Services.getAll()
+          if (cancelled) return
+          setCountriesCache(countries)
+        }
+
+        if (cancelled) return
+
+        const match = countries.find(c => c.name.common.toLowerCase().startsWith(name.toLowerCase()))
+        if (match) {
+          setCountry({ data: match, found: true })
+        } else {
+          setCountry({ found: false })
+        }
+      } catch (error) {
+        if (!cancelled) setCountry({ found: false })
+      }
+    }
+
+    findCountry()
+
+    return () => { cancelled = true }
   }, [name])
   return country
 }
@@ -62,7 +82,6 @@ const Country = ({ country }) => {
 const App = () => {
   const nameInput = useField('text')
   const [name, setName] = useState('')
-  // console.log('hey' + name);
   const country = useCountry(name)
 
   const fetch = (e) => {
