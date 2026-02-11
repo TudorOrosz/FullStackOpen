@@ -14,7 +14,7 @@ const App = (props) => {
   // Event handlers
   const handleInputChange = (event) => {
     let input = event.target.value
-    Services.getAll().then((countriesAll) =>{
+    Services.getAll().then((countriesAll) => {
       let filteredCountries = countriesAll
         .filter(country => country.name.common.toLowerCase().includes(input.toLowerCase()))
       // Condition to evaluate if there is only one country left in the filtering and set the state of countryData  
