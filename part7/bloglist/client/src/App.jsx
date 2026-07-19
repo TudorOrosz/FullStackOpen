@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -7,6 +8,15 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
+
+function ErrorFallback({ error }) {
+  return (
+    <div>
+      <h2>Oops, something went wrong!</h2>
+      <p>{error.message || 'Something went wrong'}</p>
+    </div>
+  )
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -112,27 +122,28 @@ const App = () => {
   return (
     <div>
       <h1>The insightful Blogs</h1>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        {message.text && <Notification message={message.text} type={message.type} />}
 
-      {message.text && <Notification message={message.text} type={message.type} />}
+        {user && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <p style={{ margin: 0 }}>{user.name} is logged in</p>
+            <button type="button" onClick={handleLogout}>logout</button>
+          </div>
+        )}
 
-      {user && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <p style={{ margin: 0 }}>{user.name} is logged in</p>
-          <button type="button" onClick={handleLogout}>logout</button>
-        </div>
-      )}
+        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+          <BlogForm createBlog={addBlog} />
+        </Togglable>
 
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
-
-      <ul>
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map(blog => (
-            <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
-          ))}
-      </ul>
+        <ul>
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map(blog => (
+              <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
+            ))}
+        </ul>
+      </ErrorBoundary>
     </div>
   )
 }
