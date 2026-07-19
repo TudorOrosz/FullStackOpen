@@ -1,9 +1,15 @@
-const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => (
+const LoginForm = ({
+  username,
+  password,
+  setUsername,
+  setPassword,
+  handleLogin,
+}) => (
   <form onSubmit={handleLogin}>
     <h2>Login to application</h2>
     <div>
       <label>
-                username
+        username
         <input
           type="text"
           value={username}
@@ -13,7 +19,7 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
     </div>
     <div>
       <label>
-                password
+        password
         <input
           type="password"
           value={password}
@@ -23,6 +29,6 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
     </div>
     <button type="submit">login</button>
   </form>
-)
+);
 
-export default LoginForm
+export default LoginForm;

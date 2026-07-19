@@ -1,22 +1,22 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
 
-  const addBlog = async event => {
-    event.preventDefault()
-    createBlog ({
+  const addBlog = async (event) => {
+    event.preventDefault();
+    createBlog({
       title: title,
       author: author,
-      url: url
-    })
+      url: url,
+    });
 
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+  };
 
   return (
     <div>
@@ -29,7 +29,7 @@ const BlogForm = ({ createBlog }) => {
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)}
-              placeholder='write title here'
+              placeholder="write title here"
             />
           </label>
         </div>
@@ -41,7 +41,7 @@ const BlogForm = ({ createBlog }) => {
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)}
-              placeholder='write author name here'
+              placeholder="write author name here"
             />
           </label>
         </div>
@@ -53,14 +53,14 @@ const BlogForm = ({ createBlog }) => {
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)}
-              placeholder='write url here'
+              placeholder="write url here"
             />
           </label>
         </div>
         <button type="submit">create</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default BlogForm
+export default BlogForm;
