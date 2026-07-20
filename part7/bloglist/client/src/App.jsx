@@ -3,6 +3,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
+import { useMessages } from './store'
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -20,11 +21,11 @@ function ErrorFallback({ error }) {
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [message, setMessage] = useState({ text: "", type: "" });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const blogFormRef = useRef();
+  const { text, type, setMessage, clearMessage } = useMessages();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -39,6 +40,12 @@ const App = () => {
     }
   }, []);
 
+  // Set a temporary notification message and clear it after 5 seconds
+  const showMessage = (messageText, messageType) => {
+    setMessage({ text: messageText, type: messageType });
+    setTimeout(() => clearMessage(), 5000);
+  };
+
   // Function for creating a blog -> note that reference of it is used in the BlogForm component
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
@@ -51,13 +58,10 @@ const App = () => {
     }; // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
     setBlogs((prevBlogs) => prevBlogs.concat(createdBlog));
-    setMessage({
-      text: `a new blog '${blogObject.title}' by ${blogObject.author} added`,
-      type: "success",
-    });
-    setTimeout(() => {
-      setMessage({ text: "", type: "" });
-    }, 5000);
+    showMessage(
+      `a new blog '${blogObject.title}' by ${blogObject.author} added`,
+      "success",
+    );
   };
 
   // Function for updating a bog -> note that reference of it is used in the Blog component
@@ -98,10 +102,7 @@ const App = () => {
       setPassword("");
     } catch (error) {
       console.error("Login failed:", error);
-      setMessage({ text: "wrong credentials", type: "error" });
-      setTimeout(() => {
-        setMessage({ text: "", type: "" });
-      }, 5000);
+      showMessage("wrong credentials", "error");
     }
   };
 
@@ -126,9 +127,7 @@ const App = () => {
       <div>
         <h1>The insightful Blogs</h1>
 
-        {message.text && (
-          <Notification message={message.text} type={message.type} />
-        )}
+        {text && <Notification message={text} type={type} />}
 
         <LoginForm {...loginFormProps} />
       </div>
@@ -139,9 +138,7 @@ const App = () => {
   return (
     <div>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        {message.text && (
-          <Notification message={message.text} type={message.type} />
-        )}
+        {text && <Notification message={text} type={type} />}
 
         {user && (
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
