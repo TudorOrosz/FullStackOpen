@@ -3,7 +3,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
-import { useMessages } from './store'
+import { useMessages, useBlogs, useLogin } from "./store";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -20,15 +20,15 @@ function ErrorFallback({ error }) {
 }
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const blogFormRef = useRef();
+  const { blogs, setBlogs, addBlogInStore, updateBlogInStore, removeBlogFromStore} = useBlogs();
   const { text, type, setMessage, clearMessage } = useMessages();
+  const { user, setUser, clearUser } = useLogin();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then(setBlogs);
   }, []);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const App = () => {
   };
 
   // Function for creating a blog -> note that reference of it is used in the BlogForm component
-  const addBlog = async (blogObject) => {
+  const handleAddBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
 
     const createdBlog = await blogService.create(blogObject);
@@ -57,7 +57,7 @@ const App = () => {
       id: user.id,
     }; // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
-    setBlogs((prevBlogs) => prevBlogs.concat(createdBlog));
+    addBlogInStore(createdBlog);
     showMessage(
       `a new blog '${blogObject.title}' by ${blogObject.author} added`,
       "success",
@@ -65,7 +65,7 @@ const App = () => {
   };
 
   // Function for updating a bog -> note that reference of it is used in the Blog component
-  const updateBlog = async (blogObject) => {
+  const handleUpdateBlog = async (blogObject) => {
     const blogId = blogObject.id;
     const { id, ...blogWithoutId } = blogObject;
 
@@ -74,16 +74,12 @@ const App = () => {
     // preserve original user as backend does not return username
     const original = blogs.find((b) => b.id === id);
     const normalized = { ...updatedBlog, user: original.user };
-    console.log(original.user);
-
-    setBlogs((prevBlogs) =>
-      prevBlogs.map((b) => (b.id !== id ? b : normalized)),
-    );
+    updateBlogInStore(normalized);
   };
 
-  const deleteBlog = async (blogId) => {
+  const handleDeleteBlog = async (blogId) => {
     await blogService.deleteById(blogId);
-    setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+    removeBlogFromStore(blogId);
   };
 
   const handleLogin = async (event) => {
@@ -108,7 +104,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
+    clearUser();
     blogService.setToken(null);
   };
   // Component props
@@ -119,13 +115,11 @@ const App = () => {
     setPassword,
     handleLogin,
   };
-  //const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
-
+  
   // Early return to display login page
   if (user === null) {
     return (
       <div>
-        <h1>The insightful Blogs</h1>
 
         {text && <Notification message={text} type={type} />}
 
@@ -133,6 +127,8 @@ const App = () => {
       </div>
     );
   }
+
+  console.log(blogs)
 
   // Display rest of the app when user is logged in
   return (
@@ -150,7 +146,7 @@ const App = () => {
         )}
 
         <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} />
+          <BlogForm createBlog={handleAddBlog} />
         </Togglable>
 
         <ul>
@@ -161,8 +157,8 @@ const App = () => {
                 key={blog.id}
                 user={user}
                 blog={blog}
-                updateBlog={updateBlog}
-                deleteBlog={deleteBlog}
+                updateBlog={handleUpdateBlog}
+                deleteBlog={handleDeleteBlog}
               />
             ))}
         </ul>
