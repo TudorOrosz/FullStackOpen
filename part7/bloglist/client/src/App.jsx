@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { useMessages, useBlogs, useLogin } from "./store";
+
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import persistentUser from "./services/persistentUser";
 
-import { useMessages, useBlogs, useLogin } from "./store";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
@@ -20,10 +22,14 @@ function ErrorFallback({ error }) {
 }
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const blogFormRef = useRef();
-  const { blogs, setBlogs, addBlogInStore, updateBlogInStore, removeBlogFromStore} = useBlogs();
+  const {
+    blogs,
+    setBlogs,
+    addBlogInStore,
+    updateBlogInStore,
+    removeBlogFromStore,
+  } = useBlogs();
   const { text, type, setMessage, clearMessage } = useMessages();
   const { user, setUser, clearUser } = useLogin();
 
@@ -32,7 +38,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    const loggedUserJSON = persistentUser.getUser();
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -82,20 +88,18 @@ const App = () => {
     removeBlogFromStore(blogId);
   };
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event, username, password) => {
     event.preventDefault();
     console.log("logging in with", username, password);
 
     try {
       const user = await loginService.login({ username, password });
       console.log(user);
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      persistentUser.saveUser(user);
       blogService.setToken(user.token);
 
       setUser(user);
       console.log(user);
-      setUsername("");
-      setPassword("");
     } catch (error) {
       console.error("Login failed:", error);
       showMessage("wrong credentials", "error");
@@ -103,32 +107,22 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogappUser");
+    persistentUser.removeUser();
     clearUser();
     blogService.setToken(null);
   };
   // Component props
-  const loginFormProps = {
-    username,
-    password,
-    setUsername,
-    setPassword,
-    handleLogin,
-  };
-  
+
   // Early return to display login page
   if (user === null) {
     return (
       <div>
-
         {text && <Notification message={text} type={type} />}
 
-        <LoginForm {...loginFormProps} />
+        <LoginForm handleLogin={handleLogin} />
       </div>
     );
   }
-
-  console.log(blogs)
 
   // Display rest of the app when user is logged in
   return (

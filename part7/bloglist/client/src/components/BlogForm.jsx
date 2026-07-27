@@ -1,21 +1,23 @@
-import { useState } from "react";
+import { useField } from "../hooks/index.js";
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const title = useField("");
+  const author = useField("");
+  const url = useField("");
+
+  // the event function maybe -> go through the logic
 
   const addBlog = async (event) => {
     event.preventDefault();
     createBlog({
-      title: title,
-      author: author,
-      url: url,
+      title: title.value,
+      author: author.value,
+      url: url.value,
     });
 
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    title.reset();
+    author.reset();
+    url.reset();
   };
 
   return (
@@ -26,9 +28,9 @@ const BlogForm = ({ createBlog }) => {
           <label>
             title
             <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
+              type={title.type}
+              value={title.value}
+              onChange={title.onChange}
               placeholder="write title here"
             />
           </label>
@@ -38,9 +40,9 @@ const BlogForm = ({ createBlog }) => {
           <label>
             author
             <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
+              type={author.type}
+              value={author.value}
+              onChange={author.onChange}
               placeholder="write author name here"
             />
           </label>
@@ -50,9 +52,9 @@ const BlogForm = ({ createBlog }) => {
           <label>
             url
             <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
+              type={url.type}
+              value={url.value}
+              onChange={url.onChange}
               placeholder="write url here"
             />
           </label>

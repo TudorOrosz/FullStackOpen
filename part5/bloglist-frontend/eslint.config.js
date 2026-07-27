@@ -36,6 +36,7 @@ export default [
       'no-trailing-spaces': 'error',
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': ['error', { before: true, after: true }],
+      'comma-dangle': ['error', 'never'],
       'no-console': 'off'
     }
   },
@@ -43,7 +44,7 @@ export default [
     files: ['**/*.test.{js,jsx}'],
     languageOptions: {
       globals: {
-        ...globals.vitest  // Makes test, expect, vi, describe global
+        ...globals.vitest // Makes test, expect, vi, describe global
       }
     }
   }

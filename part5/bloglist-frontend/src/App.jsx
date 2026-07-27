@@ -17,9 +17,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -36,11 +34,20 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
 
     const createdBlog = await blogService.create(blogObject)
-    createdBlog.user = { username: user.username, name: user.name, id: user.id } // so that user is also included in the createdBlog, so when we concatenate
+    createdBlog.user = {
+      username: user.username,
+      name: user.name,
+      id: user.id
+    } // so that user is also included in the createdBlog, so when we concatenate
     // in the next step the re-rendering will work. Otherwise the filter function down below will find the username
-    setBlogs(prevBlogs => prevBlogs.concat(createdBlog))
-    setMessage({ text: `a new blog '${blogObject.title}' by ${blogObject.author} added`, type: 'success' })
-    setTimeout(() => { setMessage({ text: '', type: '' }) }, 5000)
+    setBlogs((prevBlogs) => prevBlogs.concat(createdBlog))
+    setMessage({
+      text: `a new blog '${blogObject.title}' by ${blogObject.author} added`,
+      type: 'success'
+    })
+    setTimeout(() => {
+      setMessage({ text: '', type: '' })
+    }, 5000)
   }
 
   // Function for updating a bog -> note that reference of it is used in the Blog component
@@ -51,21 +58,21 @@ const App = () => {
     const updatedBlog = await blogService.update(blogId, blogWithoutId)
 
     // preserve original user as backend does not return username
-    const original = blogs.find(b => b.id === id)
+    const original = blogs.find((b) => b.id === id)
     const normalized = { ...updatedBlog, user: original.user }
     console.log(original.user)
 
-    setBlogs(prevBlogs =>
-      prevBlogs.map(b => (b.id !== id ? b : normalized))
+    setBlogs((prevBlogs) =>
+      prevBlogs.map((b) => (b.id !== id ? b : normalized))
     )
   }
 
   const deleteBlog = async (blogId) => {
     await blogService.deleteById(blogId)
-    setBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== blogId))
+    setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId))
   }
 
-  const handleLogin = async event => {
+  const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
 
@@ -82,7 +89,9 @@ const App = () => {
     } catch (error) {
       console.error('Login failed:', error)
       setMessage({ text: 'wrong credentials', type: 'error' })
-      setTimeout(() => { setMessage({ text: '', type: '' }) }, 5000)
+      setTimeout(() => {
+        setMessage({ text: '', type: '' })
+      }, 5000)
     }
   }
 
@@ -92,7 +101,13 @@ const App = () => {
     blogService.setToken(null)
   }
   // Component props
-  const loginFormProps = { username, password, setUsername, setPassword, handleLogin }
+  const loginFormProps = {
+    username,
+    password,
+    setUsername,
+    setPassword,
+    handleLogin
+  }
   //const blogFormProps = { title, author, url, setTitle, setAuthor, setUrl, addBlog };
 
   // Early return to display login page
@@ -101,7 +116,9 @@ const App = () => {
       <div>
         <h1>The insightful Blogs</h1>
 
-        {message.text && <Notification message={message.text} type={message.type} />}
+        {message.text && (
+          <Notification message={message.text} type={message.type} />
+        )}
 
         <LoginForm {...loginFormProps} />
       </div>
@@ -113,12 +130,16 @@ const App = () => {
     <div>
       <h1>The insightful Blogs</h1>
 
-      {message.text && <Notification message={message.text} type={message.type} />}
+      {message.text && (
+        <Notification message={message.text} type={message.type} />
+      )}
 
       {user && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <p style={{ margin: 0 }}>{user.name} is logged in</p>
-          <button type="button" onClick={handleLogout}>logout</button>
+          <button type="button" onClick={handleLogout}>
+            logout
+          </button>
         </div>
       )}
 
@@ -129,8 +150,14 @@ const App = () => {
       <ul>
         {blogs
           .sort((a, b) => b.likes - a.likes)
-          .map(blog => (
-            <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog}/>
+          .map((blog) => (
+            <Blog
+              key={blog.id}
+              user={user}
+              blog={blog}
+              updateBlog={updateBlog}
+              deleteBlog={deleteBlog}
+            />
           ))}
       </ul>
     </div>
