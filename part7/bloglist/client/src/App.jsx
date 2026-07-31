@@ -1,16 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { useMessages, useBlogs, useLogin } from "./store";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useMessages, useBlogs, useLogin, useUsers } from "./store";
 
 import blogService from "./services/blogs";
+import userService from "./services/users";
 import loginService from "./services/login";
 import persistentUser from "./services/persistentUser";
 
-import Blog from "./components/Blog";
+import Blogs from "./components/Blogs";
 import Notification from "./components/Notification";
-import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
-import Togglable from "./components/Togglable";
+import Header from "./components/Header";
+import NotFound from "./components/NotFound";
+import Users from "./components/Users";
+import NewBlog from "./components/NewBlog";
 
 function ErrorFallback({ error }) {
   return (
@@ -22,7 +26,6 @@ function ErrorFallback({ error }) {
 }
 
 const App = () => {
-  const blogFormRef = useRef();
   const {
     blogs,
     setBlogs,
@@ -30,12 +33,18 @@ const App = () => {
     updateBlogInStore,
     removeBlogFromStore,
   } = useBlogs();
+  const { users, setUsers } = useUsers();
   const { text, type, setMessage, clearMessage } = useMessages();
   const { user, setUser, clearUser } = useLogin();
 
   useEffect(() => {
     blogService.getAll().then(setBlogs);
-  }, []);
+  }, [setBlogs]);
+
+  useEffect(() => {
+    userService.getAll().then(setUsers);
+  }, [setUsers]);
+  //console.log(users)
 
   useEffect(() => {
     const loggedUserJSON = persistentUser.getUser();
@@ -44,7 +53,7 @@ const App = () => {
       setUser(user);
       blogService.setToken(user.token);
     }
-  }, []);
+  }, [setUser]);
 
   // Set a temporary notification message and clear it after 5 seconds
   const showMessage = (messageText, messageType) => {
@@ -54,8 +63,6 @@ const App = () => {
 
   // Function for creating a blog -> note that reference of it is used in the BlogForm component
   const handleAddBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility();
-
     const createdBlog = await blogService.create(blogObject);
     createdBlog.user = {
       username: user.username,
@@ -111,52 +118,39 @@ const App = () => {
     clearUser();
     blogService.setToken(null);
   };
-  // Component props
 
-  // Early return to display login page
-  if (user === null) {
-    return (
-      <div>
-        {text && <Notification message={text} type={type} />}
-
-        <LoginForm handleLogin={handleLogin} />
-      </div>
-    );
-  }
-
-  // Display rest of the app when user is logged in
   return (
     <div>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        {text && <Notification message={text} type={type} />}
+      <Header user={user} handleLogout={handleLogout} />
+      {text && <Notification message={text} type={type} />}
 
-        {user && (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <p style={{ margin: 0 }}>{user.name} is logged in</p>
-            <button type="button" onClick={handleLogout}>
-              logout
-            </button>
-          </div>
-        )}
-
-        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-          <BlogForm createBlog={handleAddBlog} />
-        </Togglable>
-
-        <ul>
-          {blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                user={user}
-                blog={blog}
-                updateBlog={handleUpdateBlog}
-                deleteBlog={handleDeleteBlog}
-              />
-            ))}
-        </ul>
-      </ErrorBoundary>
+      {user === null ? (
+        <LoginForm handleLogin={handleLogin} />
+      ) : (
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/blogs" replace />} />
+            <Route
+              path="/blogs"
+              element={
+                <Blogs
+                  blogs={blogs}
+                  user={user}
+                  // createBlog={handleAddBlog}
+                  updateBlog={handleUpdateBlog}
+                  deleteBlog={handleDeleteBlog}
+                />
+              }
+            />
+            <Route path="/users" element={<Users users={users} />} />
+            <Route
+              path="/new_blog"
+              element={<NewBlog createBlog={handleAddBlog} />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
+      )}
     </div>
   );
 };

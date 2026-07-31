@@ -1,0 +1,30 @@
+import User from "./User";
+
+const Users = ({ users }) => {
+  return (
+    <div id="users">
+      <h2>Users</h2>
+      <table className="users-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Blogs created</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.username}</td>
+              <td>{user.blogs.length ?? 0}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Users;

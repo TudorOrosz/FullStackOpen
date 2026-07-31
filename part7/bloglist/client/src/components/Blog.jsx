@@ -9,7 +9,7 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
     border: "solid",
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }; // should move this to CSS sheeet
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);

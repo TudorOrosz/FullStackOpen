@@ -17,16 +17,6 @@
   margin-bottom: 10px;
 }
 
-h1 {
-  font-family: sans-serif;
-  font-weight: 600;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 0.8rem;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 0.3rem;
-}
-
 h2 {
   font-family: sans-serif;
   font-weight: 500;
@@ -35,4 +25,53 @@ h2 {
   margin-top: 1.5rem;
   margin-bottom: 0.6rem;
   letter-spacing: 0.02em;
+}
+
+#logout-button {
+  background-color: white;
+  color: #1e5ba8;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.header {
+  background-color: #1e5ba8;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Users table */
+.users {
+  padding: 8px 48px 32px;
+  background: white;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.users-table th,
+.users-table td {
+  padding: 24px;
+  border-bottom: 1px solid #ddd;
+  font-size: 18px;
 }

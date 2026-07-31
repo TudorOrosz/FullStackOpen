@@ -29,4 +29,7 @@ export const useLogin = create((set) => ({
   clearUser: () => set({ user: null }),
 }))
 
-
+export const useUsers = create((set) => ({
+  users: [],
+  setUsers: (users) => set({ users }),
+}))
