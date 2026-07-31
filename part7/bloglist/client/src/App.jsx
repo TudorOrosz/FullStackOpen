@@ -44,7 +44,6 @@ const App = () => {
   useEffect(() => {
     userService.getAll().then(setUsers);
   }, [setUsers]);
-  //console.log(users)
 
   useEffect(() => {
     const loggedUserJSON = persistentUser.getUser();
@@ -101,12 +100,10 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password });
-      console.log(user);
       persistentUser.saveUser(user);
       blogService.setToken(user.token);
 
       setUser(user);
-      console.log(user);
     } catch (error) {
       console.error("Login failed:", error);
       showMessage("wrong credentials", "error");
