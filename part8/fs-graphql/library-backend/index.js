@@ -154,6 +154,7 @@ const resolvers = {
         // if author is not already in the aray
         const author = {
           name: args.author,
+          id: uuid(),
           born: null,
         };
         authors = authors.concat(author);
