@@ -77,3 +77,4 @@ const Authors = (props) => {
 };
 
 export default Authors;
+
