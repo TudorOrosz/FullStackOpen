@@ -50,14 +50,16 @@ let books = [
   },
 ];
 
-const bookCount = (author) =>
-  books.filter((book) => book.author === author).length;
-console.log(bookCount("Robert Martin"));
+// const bookCount = (author) =>
+//   books.filter((book) => book.author === author).length;
+// console.log(bookCount("Robert Martin"));
 
+//     allBooks: (root, args) => {
+//       if (!args) {
+//         return books;
+//       }
+//       return books.filter((book) => book.author === args.author);
+//     },
 
-    allBooks: (root, args) => {
-      if (!args) {
-        return books;
-      }
-      return books.filter((book) => book.author === args.author);
-    },
+title = "Robert";
+console.log(title.length);
