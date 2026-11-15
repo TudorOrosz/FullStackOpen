@@ -47,8 +47,8 @@ const resolvers = {
       return Author.find({});
     },
     me: (root, args, context) => {
-      return context.currentUser
-    }
+      return context.currentUser;
+    },
   },
   Book: {
     author: (book) => book.author,
@@ -120,6 +120,7 @@ const resolvers = {
       if (!context.currentUser) {
         throw new GraphQLError("Not authenticated");
       }
+
       const author = await Author.findOne({ name: args.name });
 
       if (!author) {
@@ -134,7 +135,7 @@ const resolvers = {
         username: args.username,
         favoriteGenre: args.favoriteGenre,
       });
-      console.log(user);
+
       return user.save().catch((error) => {
         throw new GraphQLError(`Creating the user failed: ${error.message}`, {
           extensions: {

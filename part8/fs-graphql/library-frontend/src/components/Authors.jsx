@@ -3,10 +3,10 @@ import { useQuery, useMutation } from "@apollo/client/react";
 import { UPDATE_AUTHOR, ALL_AUTHORS, ALL_BOOKS } from "../queries";
 
 const Authors = (props) => {
-  const [authorName, setAuthorName] = useState("");
-  const [birthYear, setBirthYear] = useState("");
-
   const resultAuthors = useQuery(ALL_AUTHORS);
+  
+  const [authorName, setAuthorName] = useState(resultAuthors.data.allAuthors[0].name);
+  const [birthYear, setBirthYear] = useState("");
 
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
@@ -21,12 +21,11 @@ const Authors = (props) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    console.log("update author...");
+
     updateAuthor({
       variables: { name: authorName, setBornTo: Number(birthYear) },
     });
 
-    setAuthorName("");
     setBirthYear("");
   };
 

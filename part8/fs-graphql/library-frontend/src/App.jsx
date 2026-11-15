@@ -29,16 +29,6 @@ const App = () => {
     client.resetStore();
   };
 
-  // if (!token) {
-  //   return (
-  //     <div>
-  //       {/* <Notify errorMessage={errorMessage} /> */}
-  //       <h2>Login</h2>
-  //       <LoginForm setToken={setToken} />
-  //     </div>
-  //   );
-  // }
-
   return (
     <div>
       <div>
