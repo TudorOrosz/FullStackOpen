@@ -1,15 +1,21 @@
+import { useState } from "react";
+
 const Books = (props) => {
+  const [selectedGenre, setSelectedGenre] = useState(null);
+
   if (!props.show) {
     return null;
   }
 
-  const books = props.books;
-
+  const genres = [...new Set(props.books.flatMap((book) => book.genres))];
+  const books = selectedGenre
+    ? props.books.filter((book) => book.genres.includes(selectedGenre))
+    : props.books;
 
   return (
     <div>
       <h2>books</h2>
-
+      {selectedGenre && <p> in genre <b>{selectedGenre}</b></p>}
       <table>
         <tbody>
           <tr>
@@ -26,6 +32,21 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+
+      <div>
+        {genres.map((genre) => (
+          <button
+            key={genre}
+            onClick={() => setSelectedGenre(genre)}
+            type="button"
+          >
+            {genre}
+          </button>
+        ))}
+        <button onClick={() => setSelectedGenre(null)} type="button">
+          all genres
+        </button>
+      </div>
     </div>
   );
 };

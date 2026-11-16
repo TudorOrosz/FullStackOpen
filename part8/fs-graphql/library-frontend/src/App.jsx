@@ -5,6 +5,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
+import Recommended from "./components/Recommended";
 
 const App = () => {
   const [token, setToken] = useState(
@@ -27,6 +28,7 @@ const App = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
+    setPage("authors");
   };
 
   return (
@@ -35,6 +37,7 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         {token && <button onClick={() => setPage("add")}>add book</button>}
+        {token && <button onClick={() => setPage("recommend")}>recommend</button>}
         {!token && <button onClick={() => setPage("login")}>login</button>}
         {token && <button onClick={onLogout}>logout</button>}
       </div>
@@ -51,6 +54,7 @@ const App = () => {
         setToken={setToken}
         setPage={setPage}
       />
+       <Recommended show={page === "recommend"} books={resultBooks.data.allBooks}/>
     </div>
   );
 };
